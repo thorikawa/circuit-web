@@ -22350,7 +22350,7 @@ $(() => {
 
 		let info = $('#artist-list');
 		for (let n of g.nodes) {
-			let artist = $(`<div class="artist"><a href="#${n.id}">${n.label}</a></div>`)
+			let artist = $(`<div class="artist"><a href="#${n.id}">${n.label}</a> <a href="https://www.youtube.com/results?search_query=${n.label}" target="_blank">(youtube)</a></div>`)
 			info.append(artist);
 		}
 
