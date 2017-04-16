@@ -1,14 +1,50 @@
 window.$ = require('jquery');
 window.sigma = require("sigma");
-require("sigma/plugins/sigma.renderers.parallelEdges/sigma.canvas.edgehovers.curvedArrow.js");
-require("sigma/plugins/sigma.renderers.parallelEdges/sigma.canvas.edgehovers.curve.js");
-require("sigma/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.curvedArrow.js");
-require("sigma/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.curve.js");
-require("sigma/plugins/sigma.renderers.parallelEdges/sigma.canvas.edges.labels.curve.js");
-require("sigma/plugins/sigma.parsers.json/sigma.parsers.json.js");
+
+let sig;
 
 $(() => {
-	sigma.parsers.json('data/data.json', {
-	  container: 'graph-container'
+	console.log("loaded");
+	$.getJSON("data/data.json", (g) => {
+		sig = new sigma({
+			container: 'graph-container',
+			graph: g,
+			settings: {
+				autoRescale: false
+			}
+		});
+
+		let info = $('#artist-list');
+		for (let n of g.nodes) {
+			let artist = $(`<div class="artist"><a href="#${n.id}">${n.label}</a></div>`)
+			info.append(artist);
+		}
+
+		sig.camera.goTo({
+			"x": 640,
+			"y": 360,
+			"ratio": 1.0
+		});
 	});
 });
+
+window.onhashchange = () => {
+	let hash = location.hash;
+	hash = hash.substring(1);
+	console.log(hash);
+	let g = sig.graph;
+	let camera = sig.camera;
+	console.log(camera);
+	for (let n of g.nodes()) {
+		if (n.id == hash) {
+			console.log('found', n);
+			camera.goTo({
+				"x": n.x,
+				"y": n.y
+			});
+			// sigma.utils.zoomTo(camera, n.x, n.y, 0.8);
+			sig.refresh();
+			break;
+		}
+	}
+};

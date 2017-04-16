@@ -46,7 +46,7 @@ function compileJs(watch) {
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./app/dist/'));
+      .pipe(gulp.dest('./docs/dist/'));
   }
 
   if (watch) {
@@ -63,7 +63,7 @@ function compileTemplate() {
   gulp.src(TemplateFiles)
       .pipe(templateCompile())
       .pipe(concat('templates.js'))
-      .pipe(gulp.dest('./app/dist/'))
+      .pipe(gulp.dest('./docs/dist/'))
       .on('end', function () { console.log('template compiled'); });
 }
 
@@ -76,7 +76,7 @@ function compileSass() {
     .pipe(minifyCss())
     .pipe(concat('styles.css'))
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./app/dist/'))
+    .pipe(gulp.dest('./docs/dist/'))
     .on('end', function () { console.log('css compiled'); });
 }
 
@@ -89,7 +89,7 @@ gulp.task('watch', ['watchify', 'sass', 'template'], function() {
 gulp.task('template', function () { return compileTemplate(); });
 gulp.task('sass',function() { return compileSass(); });
 gulp.task('webserver', function() {
-  gulp.src('app')
+  gulp.src('docs')
     .pipe(webserver({
       host: '0.0.0.0',
       livereload: true
