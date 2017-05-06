@@ -30,28 +30,32 @@ var CssFiles = [
 
 function compileJs(watch) {
   var bundler = watchify(
-    browserify('./src/js/app.js', {
-      debug: true,
-      ignoreMissing: true,
-      detectGlobals: false,
-      builtins: []
-    })
-    .on('log', function (time) { console.log(time); })
+    browserify('./src/js/app.js', {debug: true})
+      .transform(babel, {"presets": ["es2015", "react"]})
+      .on('log', function (time) {
+        console.log(time);
+      })
   );
 
   function rebundle() {
     bundler.bundle()
-      .on('error', function (err) { console.error(err); this.emit('end'); })
+      .on('error', function (err) {
+        console.error(err);
+        this.emit('end');
+      })
       .pipe(source('app.js'))
       .pipe(buffer())
-      .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(sourcemaps.init({loadMaps: true}))
       .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest('./docs/dist/'));
+      .pipe(gulp.dest('./docs/dist/'))
+      .on('end', function () {
+        console.log('js compiled');
+      });
   }
 
   if (watch) {
-    bundler.on('update', function() {
-      console.log('-> bundling...');
+    bundler.on('update', function () {
+      console.log('-> rebundling...');
       rebundle();
     });
   }

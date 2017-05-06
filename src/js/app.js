@@ -1,10 +1,24 @@
 window.$ = require('jquery');
 window.sigma = require("sigma");
+const React = require('react');
+const ReactDOM = require('react-dom');
 
 let sig;
 
+const ArtistList = props => {
+	return (
+		<div>
+		{props.artists.map((n) =>
+			<div className="artist" key={n.id}>
+			<a href={"#" + n.id}>{n.label}</a>
+			<a href={"https://www.youtube.com/results?search_query=" + n.label} target="_blank">(youtube)</a>
+			</div>
+		)}
+		</div>
+	);
+}
+
 $(() => {
-	console.log("loaded");
 	$.getJSON("data/data.json", (g) => {
 		sig = new sigma({
 			container: 'graph-container',
@@ -14,11 +28,10 @@ $(() => {
 			}
 		});
 
-		let info = $('#artist-list');
-		for (let n of g.nodes) {
-			let artist = $(`<div class="artist"><a href="#${n.id}">${n.label}</a> <a href="https://www.youtube.com/results?search_query=${n.label}" target="_blank">(youtube)</a></div>`)
-			info.append(artist);
-		}
+		ReactDOM.render(
+			<ArtistList artists={g.nodes} />,
+			document.getElementById('artist-list')
+		);
 
 		sig.camera.goTo({
 			"x": 640,
